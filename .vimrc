@@ -1,19 +1,27 @@
+"""""""""""""""""""""""""""""""""""""""
+"エンコード
+"""""""""""""""""""""""""""""""""""""""
+set encoding=utf-8 "エンコード設定
+scriptencoding utf-8 "スクリプトエンコード
 
-" An example for a vimrc file.
-"
-" Maintainer:	Bram Moolenaar <Bram@vim.org>
-" Last change:	2008 Dec 17
-"
-" To use it, copy it to
-"     for Unix and OS/2:  ~/.vimrc
-"	      for Amiga:  s:.vimrc
-"  for MS-DOS and Win32:  $VIM\_vimrc
-"	    for OpenVMS:  sys$login:.vimrc
 
-" When started as "evim", evim.vim will already have done these settings.
+"""""""""""""""""""""""""""""""""""""""
+"文字コード
+"""""""""""""""""""""""""""""""""""""""
+set fileencoding=utf-8 "保存時の文字コード
+set fileencodings=ucs-boms,utf-8,euc-jp,cp932 " 読み込み時の文字コード自動判定
+set fileformats=unix,dos,mac " 改行コードの自動判別　左優先
+set ambiwidth=double " 文字の崩れを修正
+set nf=hex " インクリメントディクリメント16進数に
+
 if v:progname =~? "evim"
   finish
 endif
+
+
+"""""""""""""""""""""""""""""""""""""""
+"NeoBundle
+"""""""""""""""""""""""""""""""""""""""
 
 if has('vim_starting')
        "初回起動時のみruntimepathにneobundleのパスを指定する
@@ -33,9 +41,139 @@ NeoBundle "osyo-manga/shabadou.vim"
 NeoBundle "osyo-manga/vim-watchdogs"
 NeoBundle 'scrooloose/nerdtree'
 NeoBundle 'scrooloose/syntastic.git'
+NeoBundle 'tomasr/molokai'
+NeoBundle 'w0ng/vim-hybrid'
+NeoBundle 'nanotech/jellybeans.vim'
+NeoBundle 'cohama/vim-insert-linenr'
+
+" jsxシンタックスハイライト
+NeoBundle 'pangloss/vim-javascript'
+NeoBundle 'mxw/vim-jsx'
 call neobundle#end()
 
+filetype plugin indent on
+
+" NeoBundleCheck を走らせ起動時に未インストールプラグインをインストールする
+NeoBundleCheck
+
+"""""""""""""""""""""""""""""""""""""""
+" カラースキーム
+"""""""""""""""""""""""""""""""""""""""
+" molokai
+"if neobundle#is_installed('molokai')
+"    colorscheme molokai
+"endif
+" hybrid
+"if neobundle#is_installed('vim-hybrid')
+"    colorscheme hybrid
+"    set background=dark 
+"endif
+" jellybeans
+if neobundle#is_installed('jellybeans.vim')
+    colorscheme jellybeans
+endif
+
+set t_Co=256
+syntax enable
+
+
+"""""""""""""""""""""""""""""""""""""""
+" ステータスライン
+"""""""""""""""""""""""""""""""""""""""
+set laststatus=2 "ステータスラインを常に表示
+set showmode " 現在のモードを表示
+set showcmd "売ったコマンドをステータスラインに表示
+set ruler " ステータスラインの右側にコマンドを表示
+
+
+"""""""""""""""""""""""""""""""""""""""
+" コマンドモード
+"""""""""""""""""""""""""""""""""""""""
+set wildmenu " コマンドモードの補完
+set history=5000 " 保存するコマンド数
+set noswapfile
+
+
+"""""""""""""""""""""""""""""""""""""""
+" タブインデント
+"""""""""""""""""""""""""""""""""""""""
+
+set autoindent "改行時にインデントを引き継いで改行する
+set shiftwidth=4 "インデントにつかわれる空白の数
+set softtabstop=4 "<Tab>押下時の空白数
+set expandtab "<Tab>押下時に<Tab>ではなく、ホワイトスペースを挿入する
+set tabstop=4 "<Tab>が対応する空白の数
+set smartindent "改行時にシンタックスでインデントの挿入を決める
+
+
+""""""""""""""""""""""""""""""""""""""
+" 文字列検索
+"""""""""""""""""""""""""""""""""""""""
+set incsearch " インクリメンタルサーチ
+set ignorecase " 検索に小文字大文字区別しない
+set smartcase " 検索パターンに大文字を含む場合は区別
+set hlsearch " 検索をハイライト
+
+"２回esc を押したら検索のハイライトをヤメる
+nmap <Esc><Esc> :nohlsearch<CR><Esc>
+
+""""""""""""""""""""""""""""""""""""""
+" カーソル
+"""""""""""""""""""""""""""""""""""""""
+
+set mouse=a " マウスの使用
+set nocompatible
+set whichwrap=b,s,h,l,<,>,[,],~ "カーソルが行末にきたら折り返す
+set number
+set cursorline "カーソルラインの表示
+set cursorcolumn "列を強調表示
+nmap j gj
+nmap k gk
+nmap <down> gj
+nmap <up> gk
+set nowrap " 端で折り返さない
+set backspace=indent,eol,start
+
+
+""""""""""""""""""""""""""""""""""""""
+" カッコ　タグジャンプ
+"""""""""""""""""""""""""""""""""""""""
+set showmatch " カッコの対応関係の表示
+source $VIMRUNTIME/macros/matchit.vim " Vimの「%」を拡張する
+
+
+""""""""""""""""""""""""""""""""""""""
+" ペースト設定
+"""""""""""""""""""""""""""""""""""""""
+
+set clipboard+=unnamed
+if &term =~ "xterm"
+    let &t_SI .= "\e[?2004h"
+    let &t_EI .= "\e[?2004l"
+    let &pastetoggle = "\e[201~"
+
+    function XTermPasteBegin(ret)
+        set paste
+        return a:ret
+    endfunction
+
+    inoremap <special> <expr> <Esc>[200~ XTermPasteBegin("")
+endif
+
+""""""""""""""""""""""""""""""""""""""
+" キーマッピング
+"""""""""""""""""""""""""""""""""""""""
+
+"インサートモードの時に C-j でノーマルモードに戻る
+imap <C-j> <esc>
+"[ って打ったら [] って入力されてしかも括弧の中にいる(以下同様)
+imap [ []<left>
+imap ( ()<left>
+imap { {}<left>
+
+""""""""""""""""""""""""""""""""""""""
 " unite.vimの設定
+"""""""""""""""""""""""""""""""""""""""
 noremap <C-U><C-F> :Unite -buffer-name=file file<CR> " ファイル一覧
 noremap <C-U><C-R> :Unite file_mru<CR> " 最近使ったファイル一覧
 au FileType unite nnoremap <silent> <buffer> <expr> <C-i> unite#do_action('split') " ウィンドウを分割して開く
@@ -131,68 +269,12 @@ function! s:syntastic()
     w
     SyntasticCheck
 endfunction
+" jsのシンタックス
+let g:jsx_ext_required = 0
 
-" NeoBundleCheck を走らせ起動時に未インストールプラグインをインストールする
-NeoBundleCheck
 
-filetype plugin indent on
 
-set clipboard+=unnamed
-set number
 
-set t_Co=256
-"色づけを on にする
-syntax on
-"今のところ好きなカラースキーマを使っていて大丈夫。
-"colorscheme desert
-"ターミナルの右端で文字を折り返さない
-set nowrap
-"tempファイルを作らない。編集中に電源落ちまくるし、とかいう人はコメントアウトで
-set noswapfile
-"ハイライトサーチを有効にする。文字列検索は /word とか * ね
-set hlsearch
-"大文字小文字を区別しない(検索時)
-set ignorecase
-"ただし大文字を含んでいた場合は大文字小文字を区別する(検索時)
-set smartcase
-"カーソル位置が右下に表示される
-set ruler
-"行番号を付ける
-set number
-"タブ文字の表示 ^I で表示されるよ
-set list
-"コマンドライン補完が強力になる
-set wildmenu
-"コマンドを画面の最下部に表示する
-set showcmd
-"クリップボードを共有する(設定しないとvimとのコピペが面倒です)
-set clipboard=unnamed
-"改行時にインデントを引き継いで改行する
-set autoindent
-"インデントにつかわれる空白の数
-set shiftwidth=4
-"<Tab>押下時の空白数
-set softtabstop=4
-"<Tab>押下時に<Tab>ではなく、ホワイトスペースを挿入する
-set expandtab
-"<Tab>が対応する空白の数
-set tabstop=4
-"インクリメント、デクリメントを16進数にする(0x0とかにしなければ10進数です。007をインクリメントすると010になるのはデフォルト設定が8進数のため)
-set nf=hex
-"マウス使えます
-set mouse=a
-"エンコード設定
-set enc=utf-8
-"インサートモードの時に C-j でノーマルモードに戻る
-imap <C-j> <esc>
-"[ って打ったら [] って入力されてしかも括弧の中にいる(以下同様)
-imap [ []<left>
-imap ( ()<left>
-imap { {}<left>
-"
-"２回esc を押したら検索のハイライトをヤメる
-nmap <Esc><Esc> :nohlsearch<CR><Esc>
-"}}}
 
 "ユーザ側で定義した g:quickrun_config
 let g:quickrun_config = get(g:, 'quickrun_config', {})
@@ -209,51 +291,25 @@ let g:watchdogs_check_BufWritePost_enable = 1
 
 " Use Vim settings, rather than Vi settings (much better!).
 " This must be first, because it changes other options as a side effect.
-set nocompatible
 
-" allow backspacing over everything in insert mode
-set backspace=indent,eol,start
 
 if has("vms")
   set nobackup		" do not keep a backup file, use versions instead
 else
   set backup		" keep a backup file
 endif
-set history=50		" keep 50 lines of command line history
-set ruler		" show the cursor position all the time
-set showcmd		" display incomplete commands
-set incsearch		" do incremental searching
 
-" For Win32 GUI: remove 't' flag from 'guioptions': no tearoff menu entries
-" let &guioptions = substitute(&guioptions, "t", "", "g")
-
-" Don't use Ex mode, use Q for formatting
-map Q gq
 
 " CTRL-U in insert mode deletes a lot.  Use CTRL-G u to first break undo,
 " so that you can undo CTRL-U after inserting a line break.
 inoremap <C-U> <C-G>u<C-U>
 
 " In many terminal emulators the mouse works just fine, thus enable it.
-if has('mouse')
-  set mouse=a
-endif
 
-" Switch syntax highlighting on, when the terminal has colors
-" Also switch on highlighting the last used search pattern.
-if &t_Co > 2 || has("gui_running")
-  syntax on
-  set hlsearch
-endif
 
 " Only do this part when compiled with support for autocommands.
 if has("autocmd")
 
-  " Enable file type detection.
-  " Use the default filetype settings, so that mail gets 'tw' set to 72,
-  " 'cindent' is on in C files, etc.
-  " Also load indent files, to automatically do language-dependent indenting.
-  filetype plugin indent on
 
   " Put these in an autocmd group, so that we can delete them easily.
   augroup vimrcEx
@@ -276,7 +332,6 @@ if has("autocmd")
 
 else
 
-  set autoindent		" always set autoindenting on
 
 endif " has("autocmd")
 
