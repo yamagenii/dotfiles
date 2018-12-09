@@ -46,6 +46,17 @@ NeoBundle 'w0ng/vim-hybrid'
 NeoBundle 'nanotech/jellybeans.vim'
 NeoBundle 'cohama/vim-insert-linenr'
 
+" Rust
+NeoBundle 'racer-rust/vim-racer'
+NeoBundle 'rust-lang/rust.vim'
+NeoBundle 'scrooloose/syntastic'
+let g:racer_cmd = "$HOME/.cargo/bin/racer"
+let g:rustfmt_autosave = 1
+let g:rustfmt_command = '$HOME/.cargo/bin/rustfmt'
+let g:syntastic_mode_map = { 'mode': 'passive', 'active_filetypes': ['rust'] }
+let g:syntastic_rust_checkers = ['rustc', 'cargo']
+
+
 " jsxシンタックスハイライト
 NeoBundle 'pangloss/vim-javascript'
 NeoBundle 'mxw/vim-jsx'
@@ -258,22 +269,34 @@ let g:neocomplete#sources#omni#input_patterns.perl = '\h\w*->\h\w*\|\h\w*::'
 nnoremap :tree :NERDTreeToggle
 
 "  自動syntasticチェック
-let g:syntastic_enable_signs=1
-let g:syntastic_auto_loc_list=2
-let g:syntastic_mode_map = {'mode': 'passive'} 
-augroup AutoSyntastic
-    autocmd!
-    autocmd InsertLeave,TextChanged * call s:syntastic() 
-augroup END
-function! s:syntastic()
-    w
-    SyntasticCheck
-endfunction
-" jsのシンタックス
-let g:jsx_ext_required = 0
+"let g:syntastic_enable_signs=1
+"let g:syntastic_auto_loc_list=2
+"let g:syntastic_mode_map = {'mode': 'passive'} 
+"augroup AutoSyntastic
+"    autocmd!
+"    autocmd InsertLeave,TextChanged * call s:syntastic() 
+"augroup END
+"function! s:syntastic()
+"    w
+"    SyntasticCheck
+"endfunction
+"" jsのシンタックス
+"let g:jsx_ext_required = 0
+"let g:syntastic_markdown_checkers = ['textlint']
 
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
 
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 1
+let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 0
 
+" TODO:うざいので作成時は削除
+"
+let g:syntastic_markdown_checkers = ['textlint']
+let g:syntastic_text_checkers = ['textlint']
 
 
 "ユーザ側で定義した g:quickrun_config
